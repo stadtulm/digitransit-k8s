@@ -1,0 +1,80 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: digitransit-nginx-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+      - digitransit.ulm.dev
+      - api.digitransit.ulm.dev
+      secretName: tls-digitransitulmdev
+  rules:
+    - host: digitransit.ulm.dev
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: digitransit-ui
+            servicePort: 8080
+    - host: api.digitransit.ulm.dev
+      http:
+        paths:
+        - path: /map/v1
+          backend:
+            serviceName: hsl-map-server
+            servicePort: 8080
+        - path: /graphiql
+          backend:
+            serviceName: graphiql
+            servicePort: 8080
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: digitransit-nginx-ingress-api
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /otp/$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,OTPTimeout,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+spec:
+  tls:
+    - hosts:
+      - digitransit.ulm.dev
+      - api.digitransit.ulm.dev
+      secretName: tls-digitransitulmdev
+  rules:
+    - host: api.digitransit.ulm.dev
+      http:
+        paths:
+        - path: /routing/v1(/|$)(.*)
+          backend:
+            serviceName: opentripplanner
+            servicePort: 8080
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: digitransit-nginx-ingress-geocoding
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /v1/$2
+spec:
+  tls:
+    - hosts:
+      - digitransit.ulm.dev
+      - api.digitransit.ulm.dev
+      secretName: tls-digitransitulmdev
+  rules:
+    - host: api.digitransit.ulm.dev
+      http:
+        paths:
+        - path: /geocoding/v1(/|$)(.*)
+          backend:
+            serviceName: photon-pelias-adapter
+            servicePort: 8080

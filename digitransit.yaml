@@ -1,0 +1,237 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hsl-map-server
+spec:
+  selector:
+    app: hsl-map-server
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphiql
+spec:
+  selector:
+    app: graphiql
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: photon-pelias-adapter
+spec:
+  selector:
+    app: photon-pelias-adapter
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: digitransit-ui
+spec:
+  selector:
+    app: digitransit-ui
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentripplanner-data-con
+spec:
+  selector:
+    app: opentripplanner-data-container
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentripplanner
+spec:
+  selector:
+    app: opentripplanner
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentripplanner-data-container
+  labels:
+    app: opentripplanner-data-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opentripplanner-data-container
+  template:
+    metadata:
+      labels:
+        app: opentripplanner-data-container
+    spec:
+      containers:
+      - name: opentripplanner-data-container
+        image: verschwoerhaus/opentripplanner-data-container-vsh:2020-01-22-latest
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentripplanner
+  labels:
+    app: opentripplanner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opentripplanner
+  template:
+    metadata:
+      labels:
+        app: opentripplanner
+    spec:
+      containers:
+      - name: opentripplanner
+        image: hsldevcom/opentripplanner:da7ca2a4d5a8cb381cd64efc6df5ba4252d45440
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ROUTER_NAME
+          value: vsh
+        - name: ROUTER_DATA_CONTAINER_URL
+          value: http://opentripplanner-data-con:8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digitransit-ui
+  labels:
+    app: digitransit-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digitransit-ui
+  template:
+    metadata:
+      labels:
+        app: digitransit-ui
+    spec:
+      containers:
+      - name: digitransit-ui
+        image: verschwoerhaus/digitransit-ui:eb24971
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: CONFIG
+          value: ulm
+        - name: API_URL
+          value: "https://api.digitransit.ulm.dev"
+        - name: OTP_URL
+          value: "https://api.digitransit.ulm.dev/routing/v1/routers/vsh/"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hsl-map-server
+  labels:
+    app: hsl-map-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hsl-map-server
+  template:
+    metadata:
+      labels:
+        app: hsl-map-server
+    spec:
+      containers:
+      - name: hsl-map-server
+        image: verschwoerhaus/hsl-map-server:b4adf23
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: OTP_URL
+          value: opentripplanner:8080/otp/routers/vsh/index/graphql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphiql
+  labels:
+    app: graphiql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphiql
+  template:
+    metadata:
+      labels:
+        app: graphiql
+    spec:
+      containers:
+      - name: graphiql
+        image: verschwoerhaus/graphiql:2019-10-30
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: URL_PREFIX
+          value: https://api.digitransit.ulm.dev
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photon-pelias-adapter
+  labels:
+    app: photon-pelias-adapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photon-pelias-adapter
+  template:
+    metadata:
+      labels:
+        app: photon-pelias-adapter
+    spec:
+      containers:
+      - name: photon-pelias-adapter
+        image: stadtulm/photon-pelias-adapter:5903fc0
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PHOTON_URL
+          value: https://api.mfdz.de/photon/
+
