@@ -156,6 +156,8 @@ spec:
           value: "https://api.digitransit.ulm.dev"
         - name: OTP_URL
           value: "https://api.digitransit.ulm.dev/routing/v1/routers/vsh/"
+        - name: GEOCODING_BASE_URL
+          value: "https://api.digitransit.ulm.dev/geocoding/v1"
 ---
 apiVersion: apps/v1
 kind: Deployment
