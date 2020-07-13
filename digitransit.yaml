@@ -123,7 +123,7 @@ spec:
         - containerPort: 8080
         env:
         - name: ROUTER_NAME
-          value: vsh
+          value: ulm
         - name: ROUTER_DATA_CONTAINER_URL
           value: http://opentripplanner-data-con:8080
 ---
@@ -155,7 +155,7 @@ spec:
         - name: API_URL
           value: "https://api.digitransit.ulm.dev"
         - name: OTP_URL
-          value: "https://api.digitransit.ulm.dev/routing/v1/routers/vsh/"
+          value: "https://api.digitransit.ulm.dev/routing/v1/routers/ulm/"
         - name: GEOCODING_BASE_URL
           value: "https://api.digitransit.ulm.dev/geocoding/v1"
 ---
