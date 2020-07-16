@@ -60,8 +60,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 80
+    targetPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -97,7 +97,7 @@ spec:
         image: stadtulm/opentripplanner-data-container-ulm:2020-07-16-latest
         imagePullPolicy: "Always"
         ports:
-        - containerPort: 8080
+        - containerPort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,7 +125,7 @@ spec:
         - name: ROUTER_NAME
           value: ulm
         - name: ROUTER_DATA_CONTAINER_URL
-          value: http://opentripplanner-data-con:8080
+          value: http://opentripplanner-data-con
 ---
 apiVersion: apps/v1
 kind: Deployment
