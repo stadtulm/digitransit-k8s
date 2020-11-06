@@ -41,6 +41,33 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
+  name: digitransit-nginx-ingress-api-gbfs
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-max-age: "7200"
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "/zeus-gbfs"
+spec:
+  tls:
+    - hosts:
+      - digitransit.ulm.dev
+      - api.digitransit.ulm.dev
+      secretName: tls-digitransitulmdev
+  rules:
+    - host: api.digitransit.ulm.dev
+      http:
+        paths:
+        - path: /zeus-gbfs(/|$)(.*)
+          backend:
+            serviceName: zeus-gbfs
+            servicePort: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
   name: digitransit-nginx-ingress-api
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
