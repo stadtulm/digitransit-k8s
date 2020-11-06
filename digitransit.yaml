@@ -171,7 +171,7 @@ spec:
     spec:
       containers:
       - name: digitransit-ui
-        image: verschwoerhaus/digitransit-ui:8e98d30
+        image: verschwoerhaus/digitransit-ui:14a5be0
         imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
