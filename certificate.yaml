@@ -1,15 +1,16 @@
-# is this needed? does the ingress this by default?
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: digitransit-ulm-dev
   namespace: default
 spec:
-  secretName: tls-digitransitulmdev
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
   commonName: digitransit.ulm.dev
+  duration: 2160h # 90d
+  renewBefore: 672h # 28d
   dnsNames:
   - digitransit.ulm.dev
   - api.digitransit.ulm.dev
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  secretName: tls-digitransitulmdev

@@ -1,15 +1,15 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
- name: letsencrypt-production
- namespace: cert-manager
+  name: letsencrypt-production
 spec:
- acme:
-   email: hostmaster@ulm.dev
-   privateKeySecretRef:
-     name: letsencrypt-production
-   server: https://acme-v02.api.letsencrypt.org/directory
-   solvers:
-   - http01:
-       ingress:
-         class: nginx
+  acme:
+    email: hostmaster@ulm.dev
+    preferredChain: "ISRG Root X1"
+    privateKeySecretRef:
+      name: letsencrypt-production
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
