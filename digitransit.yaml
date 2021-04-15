@@ -120,7 +120,7 @@ spec:
     spec:
       containers:
       - name: opentripplanner-data-container
-        image: stadtulm/opentripplanner-data-container-ulm:2020-11-06-1cafef5
+        image: stadtulm/opentripplanner-data-container-ulm:2021-04-15-1cafef5
         imagePullPolicy: "Always"
         ports:
         - containerPort: 80
